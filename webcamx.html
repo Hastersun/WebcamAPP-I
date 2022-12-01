@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        video{
+             width: 90%;
+            height:90%;;
+            border: 1px solid #ccc;
+position:absolute;
+left:2px;
+        }
+        canvas{
+            border: 1px solid red;
+position:absolute;
+left:2px;
+visibility:hidden;
+        }
+
+    </style>
+    <title>Webcamx</title>
+</head>
+<body>
+    <video autoplay id='video'></video>
+    <canvas id="output"></canvas>
+</body>
+</html>
+<script>
+    //var video = document.getElementById('video')
+    //var back = document.getElementById('output')
+    var video = $("#video").get(0)
+    var back = $("#output").get(0)
+    //console.log(back,video)
+    var backcontext = back.getContext('2d')
+    function draw() {
+        backcontext.drawImage(video,0,0,back.width,back.height)
+        try{
+            backcontext.drawImage(video,0,0,back.width,back.height)
+        }catch(e){
+            if(e.name == "NS_ERROR_NOT_AVAILABLE"){
+                return setInterval(draw,200)
+            }else{
+                throw e
+            }
+        }
+        setTimeout(draw,200)
+    }
+    var success = function(stream){
+        console.log('Success : Camera using!')
+        //videoUrl = window.URL.createObjectURL(stream)
+        //video.src = videoUrl
+		video.srcObject = stream
+        draw()
+    }
+    var error = (error)=>{
+        alert('Error : cant use camera')
+    }
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
+    navigator.getUserMedia({video:true,audio:false},success,error)
+</script>
+
